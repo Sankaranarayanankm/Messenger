@@ -1,28 +1,53 @@
 import React, { useEffect, useState } from "react";
-import "./App.css";
 import { Button, FormControl, Input, InputLabel } from "@mui/material";
+import { addDoc, collection, getDocs } from "firebase/firestore";
 import Message from "./Components/Message";
+import db from "./firebase";
+import "./App.css";
+import firebase from "firebase/compat/app";
 
 const App = () => {
   const [input, setInput] = useState("");
-  const [messages, setMessages] = useState([
-    { username: "Sonny", text: "Hello" },
-    { username: "Sankara", text: "this is lit" },
-  ]);
+  const [messages, setMessages] = useState([]);
   const [userName, setUserName] = useState("");
+
+  // getting data from fire base when the page loads
+  useEffect(() => {
+    const fetchData = async () => {
+      const querySnapshot = await getDocs(collection(db, "messages"));
+      const messagesData = querySnapshot.docs.map((doc) => ({
+        ...doc.data(),
+      }));
+      setMessages(messagesData);
+    };
+
+    fetchData();
+  }, []);
 
   useEffect(() => {
     const name = prompt("Please enter your name!");
     setUserName(name);
   }, []);
 
-  const sendMessage = (event) => {
+  const sendMessage = async (event) => {
     event.preventDefault();
-    if (input.length == 0) return;
-    setMessages([...messages, { username:userName, text: input }]);
+    if (input.length === 0) return;
+    // adding data to the firestore
+    try {
+       await addDoc(
+        collection(db, "messages"), {
+          message: input,
+          username: userName,
+          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        }
+      );
+      // console.log(docs);
+    } catch (error) {
+      console.log(error);
+    }
     setInput("");
   };
-  console.log(messages);
+
   return (
     <div className="App">
       <h1>Welcome To Messenger</h1>
@@ -40,7 +65,7 @@ const App = () => {
         </FormControl>
       </form>
       {messages.map((message) => (
-        <Message username={message.username} text={message.text} />
+        <Message username={userName} message={message} />
       ))}
     </div>
   );
