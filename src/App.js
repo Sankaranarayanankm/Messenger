@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, FormControl, Input, InputLabel } from "@mui/material";
+import { FormControl, Input } from "@mui/material";
 import {
   collection,
   onSnapshot,
@@ -12,6 +12,8 @@ import Message from "./Component/Message";
 import db from "./firebase";
 import FlipMove from "react-flip-move";
 import logo from "./assets/facebook-messenger.svg";
+import SendIcon from "@mui/icons-material/Send";
+import { IconButton } from "@mui/material";
 import "./App.css";
 const App = () => {
   const [input, setInput] = useState("");
@@ -56,15 +58,23 @@ const App = () => {
       <h1>Welcome To Messenger</h1>
       <h2>Welcome {userName}</h2>
       <form className="app__form" onSubmit={sendMessage}>
-        <FormControl>
-          <InputLabel>Enter a message</InputLabel>
+        <FormControl className="app__formControl">
           <Input
+          className="app__input"
+            placeholder="Enter a message"
             value={input}
             onChange={(event) => setInput(event.target.value)}
           />
-          <Button variant="contained" color="primary" onClick={sendMessage}>
-            Send message
-          </Button>
+
+          <IconButton
+          className="app__iconButton"
+            disabled={!input}
+            variant="contained"
+            color="primary"
+            onClick={sendMessage}
+          >
+            <SendIcon />
+          </IconButton>
         </FormControl>
       </form>
       <FlipMove>
