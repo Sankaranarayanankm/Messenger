@@ -1,0 +1,12 @@
+.app {
+  text-align: center;
+}
+.app__form {
+  padding: 20px;
+  position: fixed; /* this is used so that the position of the button will always in the bottom even when we scrol down  */
+  bottom: 0;
+  z-index: 1; /* by default z-index is 0 and its for priority*/
+  background-color: lightgray;
+  width: 100%;
+  margin: 20px;
+}

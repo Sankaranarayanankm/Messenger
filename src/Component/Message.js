@@ -1,15 +1,14 @@
 import { Card, CardContent, Typography } from "@mui/material";
-import React from "react";
+import React, { forwardRef } from "react";
 import "./Message.css";
 
-const Message = ({ username, message }) => {
-  // console.log(username,message);
-  if(!message) return null;
+const Message = forwardRef(({ username, message }, ref) => {
+  if (!message) return null;
   // to check if the message is typed in by the logged in user then we want to display it diffrently
-  const isLogin = username===message.username;
+  const isLogin = username === message.username;
 
   return (
-    <div className={`message ${isLogin && "message__user"}`}>
+    <div ref={ref} className={`message ${isLogin && "message__user"}`}>
       <Card className={isLogin ? "message__userCard" : "message__guestCart"}>
         <CardContent>
           <Typography color="black" variant="h5" component="h2">
@@ -19,6 +18,6 @@ const Message = ({ username, message }) => {
       </Card>
     </div>
   );
-};
+});
 
 export default Message;

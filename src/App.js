@@ -9,9 +9,10 @@ import {
   orderBy,
 } from "firebase/firestore";
 import Message from "./Component/Message";
-// import firebase from 'firebase';
 import db from "./firebase";
-
+import FlipMove from "react-flip-move";
+import logo from "./assets/facebook-messenger.svg";
+import "./App.css";
 const App = () => {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState([]);
@@ -20,7 +21,9 @@ const App = () => {
   useEffect(() => {
     const q = query(collection(db, "messages"), orderBy("timestamp", "desc"));
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      setMessages(snapshot.docs.map((doc) => doc.data()));
+      setMessages(
+        snapshot.docs.map((doc) => ({ id: doc.id, message: doc.data() }))
+      );
     });
 
     return () => unsubscribe();
@@ -48,10 +51,11 @@ const App = () => {
   };
 
   return (
-    <div className="App">
+    <div className="app">
+      <img src={logo} alt="Messenger Logo" />
       <h1>Welcome To Messenger</h1>
       <h2>Welcome {userName}</h2>
-      <form onSubmit={sendMessage}>
+      <form className="app__form" onSubmit={sendMessage}>
         <FormControl>
           <InputLabel>Enter a message</InputLabel>
           <Input
@@ -63,42 +67,13 @@ const App = () => {
           </Button>
         </FormControl>
       </form>
-      {messages.map((message) => (
-        <Message username={userName} message={message} />
-      ))}
+      <FlipMove>
+        {messages.map(({ id, message }) => (
+          <Message key={id} username={userName} message={message} />
+        ))}
+      </FlipMove>
     </div>
   );
 };
 
 export default App;
-
-// useEffect(() => {
-// getting data from fire base when the page loads
-//
-
-//   const fetchData = async () => {
-//     // const q= query(
-//     //   collection(db, "messages"),
-//     //   orderBy("timestamp", "asc")
-//     // );
-//     const querySnapshot = await getDocs(collection(db, "messages"));
-//     const messagesData = querySnapshot.docs.map((doc) => ({
-//       ...doc.data(),
-//     }));
-//     setMessages(messagesData);
-//   };
-
-//   fetchData();
-// }, []);
-
-// adding data to the firestore
-// try {
-//   const docs = await addDoc(collection(db, "messages"), {
-//     message: input,
-//     username: userName,
-//     timestamp: serverTimestamp(), // error here  undefiled field value
-//   });
-//   console.log(docs);
-// } catch (error) {
-//   console.log(error);
-// }
